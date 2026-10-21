@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#E3EAE2">
+  <title>Pageant score tabulation</title>
+  <link rel="preload" href="assets/archivo-variable.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="#overview" aria-label="Pageant tabulation home">Pageant <span>tabulation</span></a>
+      <div class="event-side">
+        <div class="eyebrow">Current event</div>
+        <div id="sidebar-event" class="sidebar-event-name">New Pageant</div>
+        <div class="event-status">Organizer workspace</div>
+      </div>
+      <nav class="main-nav" aria-label="Main navigation">
+        <button class="nav-item active" data-view="overview">Overview</button>
+        <button class="nav-item" data-view="contestants">Contestants <span class="nav-count" id="contestant-count">0</span></button>
+        <button class="nav-item" data-view="judges">Judges <span class="nav-count" id="judge-count">0</span></button>
+        <button class="nav-item" data-view="rounds">Rounds</button>
+        <button class="nav-item" data-view="categories">Categories</button>
+        <button class="nav-item" data-view="scores">Score entry</button>
+        <button class="nav-item" data-view="results">Results</button>
+        <button class="nav-item" data-view="audit">Audit log</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="storage-indicator"><div><strong id="storage-status">Saved on this device</strong><small id="backup-status">Last backup: never</small></div></div>
+        <button class="text-button" id="backup-button">Backup and restore</button>
+        <button class="text-button text-button-danger" id="sidebar-reset-button" type="button">Reset contest</button>
+      </div>
+    </aside>
+
+    <main class="main-area">
+      <header class="topbar">
+        <button class="mobile-menu" id="mobile-menu" aria-label="Open navigation">Menu</button>
+        <div class="breadcrumbs">Workspace <span>/</span> <strong id="crumb-title">Overview</strong></div>
+        <div class="top-actions"><button class="icon-button" id="help-button" aria-label="Help" title="Help">Help</button></div>
+      </header>
+      <div id="toast-region" class="toast-region" aria-live="polite"></div>
+
+      <section class="view active" id="view-overview">
+        <div class="page-heading"><div><div class="eyebrow">Event workspace</div><h1 id="welcome-title">Event overview</h1><p>Configure the event, record scores, and review the tabulation.</p></div><button class="button button-primary" data-go="scores">Enter scores</button></div>
+        <div class="event-banner"><div class="banner-copy"><div class="eyebrow light">Current event</div><h2 id="banner-event">New Pageant</h2><p id="banner-meta">Add event details to get started</p></div><button class="button button-light" data-go="settings">Edit event details</button></div>
+        <div class="stats-grid">
+          <article class="stat-card"><div class="stat-label">Contestants</div><div class="stat-value" id="stat-contestants">0</div><div class="stat-foot">Registered in this event</div></article>
+          <article class="stat-card"><div class="stat-label">Judges</div><div class="stat-value" id="stat-judges">0</div><div class="stat-foot">Scoring this event</div></article>
+          <article class="stat-card"><div class="stat-label">Categories</div><div class="stat-value" id="stat-categories">0</div><div class="stat-foot">Included in tabulation</div></article>
+          <article class="stat-card"><div class="stat-label">Score completion</div><div class="stat-value" id="stat-completion">0%</div><div class="progress-track"><span id="completion-bar"></span></div></article>
+        </div>
+        <div class="dashboard-grid">
+          <section class="panel setup-panel"><div class="panel-heading"><div><div class="eyebrow">Setup</div><h3>Event checklist</h3></div><span class="checklist-count" id="checklist-progress">0 / 4</span><button class="button button-outline" id="continue-setup" data-go="settings" type="button">Start setup</button></div><div class="checklist" id="checklist"></div></section>
+          <section class="panel quick-panel"><div class="panel-heading"><div><div class="eyebrow">Shortcuts</div><h3>Manage event details</h3></div></div><div class="quick-links"><button data-go="contestants"><span><strong>Contestants</strong><small>Add and manage entries</small></span></button><button data-go="judges"><span><strong>Judges</strong><small>Set up the judging panel</small></span></button><button data-go="categories"><span><strong>Categories</strong><small>Set criteria and weights</small></span></button></div></section>
+        </div>
+        <section class="panel recent-panel"><div class="panel-heading"><div><div class="eyebrow">Current standing</div><h3>Scores at a glance</h3></div><button class="link-button" data-go="results">View results</button></div><div id="overview-results" class="overview-results"></div></section>
+      </section>
+
+      <section class="view" id="view-contestants">
+        <div class="page-heading"><div><div class="eyebrow">Event roster</div><h1>Contestants</h1><p>Record each contestant number and name.</p></div><button class="button button-primary" id="add-contestant">Add contestant</button></div>
+        <section class="panel"><div class="toolbar"><div class="search-wrap"><span aria-hidden="true">Search</span><input id="contestant-search" placeholder="Search by number or name" aria-label="Search contestants"></div><span class="muted" id="contestant-total">0 contestants</span></div><div class="table-wrap"><table><thead><tr><th>Entry</th><th>Contestant</th><th>Status</th><th></th></tr></thead><tbody id="contestant-table"></tbody></table></div><div class="empty-state" id="contestant-empty"><strong>Your roster is empty</strong><p>Add contestants to prepare for score entry.</p><button class="button button-outline" data-action="add-contestant">Add first contestant</button></div></section>
+      </section>
+
+      <section class="view" id="view-judges">
+        <div class="page-heading"><div><div class="eyebrow">Scoring panel</div><h1>Judges</h1><p>Record the judges scoring this event.</p></div><button class="button button-primary" id="add-judge">Add judge</button></div>
+        <section class="panel"><div class="toolbar"><div class="search-wrap"><span aria-hidden="true">Search</span><input id="judge-search" placeholder="Search judges" aria-label="Search judges"></div><span class="muted" id="judge-total">0 judges</span></div><div class="table-wrap"><table><thead><tr><th>Judge</th><th>Scores entered</th><th></th></tr></thead><tbody id="judge-table"></tbody></table></div><div class="empty-state" id="judge-empty"><strong>No judges added</strong><p>Judges added here appear in score entry.</p><button class="button button-outline" data-action="add-judge">Add first judge</button></div></section>
+      </section>
+
+      <section class="view" id="view-categories">
+        <div class="page-heading"><div><div class="eyebrow">Scoring framework</div><h1>Categories and criteria</h1><p>Define what judges score and how each category contributes within its round. Earlier-round scores do not carry forward.</p></div><div class="page-heading-actions"><button class="button button-outline" id="open-setup-wizard-categories" type="button">Quick setup</button><button class="button button-primary" id="add-category">Add category</button></div></div>
+        <div class="panel category-round-picker"><label for="category-round-filter">Round to edit</label><select id="category-round-filter"></select><span id="category-round-status" class="muted" hidden></span></div>
+        <div class="weight-callout"><span class="callout-icon" aria-hidden="true">Note</span><div><strong id="weight-summary-title">Category contributions</strong><p id="weight-summary">Set category contributions within this round to total 100%. These percentages do not carry scores forward from earlier rounds.</p></div></div>
+        <div id="category-list" class="category-list"></div>
+        <div class="empty-state panel" id="category-empty"><strong id="category-empty-title">No categories in this round</strong><p id="category-empty-description">Add categories and criteria before entering scores.</p><button class="button button-outline" data-action="add-category">Add first category to this round</button></div>
+      </section>
+
+      <section class="view" id="view-rounds">
+        <div class="page-heading"><div><div class="eyebrow">Competition stages</div><h1>Rounds</h1><p>Set the round order, how many contestants advance, and how ties are decided.</p></div><div class="page-heading-actions"><button class="button button-outline" id="open-setup-wizard" type="button">Quick setup</button><button class="button button-primary" id="add-round" type="button">Add round</button></div></div>
+        <p class="panel muted">Round order controls scoring order and advancement. Move rounds before finishing any round.</p>
+        <div id="round-list" class="category-list"></div>
+      </section>
+
+      <section class="view" id="view-scores">
+        <div class="page-heading"><div><div class="eyebrow">Score entry</div><h1>Enter judges’ scores</h1><p>Select a round, category, and criterion. Enter scores for all judges in one grid.</p></div></div>
+        <div id="score-advancement-status" class="score-advancement-status" role="status" hidden></div>
+        <div class="score-controls panel"><label>Round<select id="score-round"></select></label><label>Category<select id="score-category"></select></label><label>Criterion<select id="score-criterion"></select></label><select id="score-judge" hidden aria-hidden="true"></select></div>
+        <div id="score-grid" class="score-grid"></div>
+        <div class="score-submit-bar panel"><span id="score-save-message" role="status" aria-live="polite">Enter scores from 0 to 100, then save the grid.</span><button class="button button-outline" id="lock-sheet" type="button" hidden>Lock sheet</button><button class="button button-outline" id="unlock-sheet" type="button" hidden>Unlock sheet</button><span id="backup-prompt" role="status" aria-live="polite"></span><button class="button button-outline" id="save-next-scores" type="button">Save &amp; next</button><button class="button button-primary" id="submit-scores" type="button">Save &amp; view rankings</button></div>
+      </section>
+
+      <section class="view" id="view-results">
+        <div class="page-heading"><div><div class="eyebrow">Final tabulation</div><h1>Results</h1><p>Each round has separate rankings. The contestant with the highest score in the final round wins; earlier-round scores only decide who advances.</p></div></div>
+        <div id="round-rankings" class="round-rankings"></div>
+        <div class="results-controls panel"><label>Round<select id="results-round"></select></label><label>View<select id="results-view"><option value="standings">Standings</option><option value="judge">By judge</option></select></label><label>Category or total<select id="results-category"></select></label><button class="button button-outline" id="print-results" type="button">Print tabulation sheet</button><div class="export-actions"><button class="text-button" data-export="standings" type="button">Export standings CSV</button><button class="text-button" data-export="judge" type="button">Export by-judge CSV</button><button class="text-button" data-export="raw" type="button">Export raw scores CSV</button><button class="text-button" data-export="audit" type="button">Export audit CSV</button></div></div>
+        <div class="results-summary" id="results-summary"></div>
+        <section class="panel category-winners-panel"><div class="results-heading"><div><div class="eyebrow">Category standings</div><h3>Category winners</h3></div><span class="muted">Provisional leaders update as scores arrive.</span></div><div id="category-winners" class="category-winners"></div></section>
+        <div class="results-tabs" id="results-tabs"></div>
+        <section class="panel missing-panel"><h3>What is missing</h3><ul id="what-missing"></ul></section>
+        <section class="panel cutoff-panel" id="cutoff-panel" hidden></section>
+        <div class="finalize-actions"><button class="button button-primary" id="finalize-round" type="button">Finish round &amp; proceed to next</button><span id="round-transition-note" class="muted"></span><button class="button button-outline" id="unfinalize-round" type="button" hidden>Reopen round</button></div>
+        <section class="panel results-chart-panel"><div class="results-heading"><div><div class="eyebrow">Score progress</div><h3 id="chart-title">Overall score progress</h3></div><span class="muted">Bars show weighted points toward 100.</span></div><div id="results-chart" class="results-chart" role="region" aria-label="Current contestant score progress"></div></section>
+        <section class="panel results-panel"><div class="print-heading" id="print-heading"></div><div class="results-heading"><div><div class="eyebrow" id="results-kicker">Overall tabulation</div><h3 id="results-title">Overall results</h3></div><span class="muted" id="results-subtitle"></span></div><div class="table-wrap"><table class="results-table"><thead id="results-head"></thead><tbody id="results-body"></tbody></table></div><div class="empty-state compact" id="results-empty"><strong>Results will appear here</strong><p>Complete setup and enter scores to see standings.</p></div><footer id="print-footer" class="print-footer"><div id="print-judge-signatures"></div><p>Tabulated by: ____________________________</p><p>Verified by (chairperson): ____________________________</p><p>Printed <time id="print-time"></time></p></footer></section>
+        <p class="result-note">An asterisk marks a provisional rank. Final rankings are confirmed when every judge completes every criterion and the weights total 100%.</p>
+      </section>
+
+      <section class="view" id="view-audit">
+        <div class="page-heading"><div><div class="eyebrow">Change history</div><h1>Audit log</h1><p>Recorded changes to this event, newest first.</p></div></div>
+        <div class="audit-controls panel"><label>Type<select id="audit-type"><option value="">All types</option></select></label><label>Search<input id="audit-search" type="search" placeholder="Filter audit log"></label></div><div id="audit-list" class="category-list"></div>
+      </section>
+
+      <section class="view" id="view-settings">
+        <div class="page-heading"><div><div class="eyebrow">Event details</div><h1>Event setup</h1><p>Set the pageant name, date, and optional location.</p></div></div>
+        <section class="panel form-panel"><form id="event-form"><label>Pageant name<input name="name" required maxlength="100" placeholder="e.g. Miss City 2026"></label><div class="form-row"><label>Event date<input name="date" type="date"></label><label>Location<input name="location" maxlength="120" placeholder="Venue or city"></label></div><div class="form-footer"><span>Event details save on this device.</span><button class="button button-primary" type="submit">Save event details</button></div></form></section>
+        <section class="panel form-panel"><h3>Chairperson PIN</h3><p>The PIN helps prevent accidental changes on a shared screen. It is not strong security because event data is stored in this browser.</p><div id="pin-status" role="status"></div><label>Set PIN<input id="pin-value" type="password" inputmode="numeric" autocomplete="new-password" minlength="4"></label><button class="button button-outline" id="save-pin" type="button">Save chairperson PIN</button></section>
+        <section class="panel reset-panel"><div><div class="eyebrow">Next competition</div><h3>Start a new contest</h3><p>Clear this event’s details, contestants, judges, categories, and scores to prepare for another contest.</p></div><button class="button button-danger" id="start-new-contest" type="button">Reset all contest fields</button></section>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="edit-dialog" class="modal"><form method="dialog" id="edit-form"><div class="modal-heading"><div><div class="eyebrow" id="modal-eyebrow">Event setup</div><h2 id="modal-title">Add contestant</h2></div><button class="modal-close" value="cancel" aria-label="Close">Close</button></div><div id="modal-error" role="alert" aria-live="assertive" hidden></div><div id="modal-fields" class="modal-fields"></div><div class="modal-footer"><button type="button" class="button button-outline" id="modal-cancel">Cancel</button><button class="button button-primary" id="modal-save" value="default">Save</button></div></form></dialog>
+  <dialog id="backup-dialog" class="modal"><form method="dialog"><div class="modal-heading"><div><div class="eyebrow">Event data</div><h2>Backup and restore</h2></div><button class="modal-close" value="cancel" aria-label="Close">Close</button></div><p class="modal-description">Download a copy of this event or restore an earlier backup.</p><div class="backup-actions"><button type="button" class="button button-outline" id="backup-export">Download JSON backup</button><button type="button" class="button button-outline" id="backup-import">Restore JSON backup</button><input type="file" id="json-file" accept=".json,application/json" hidden></div><div class="backup-warning">Restoring a backup replaces the event currently saved in this browser.</div><div class="modal-footer"><button class="button button-primary" value="cancel">Done</button></div></form></dialog>
+  <dialog id="help-dialog" class="modal guide-modal"><form method="dialog"><div class="modal-heading"><div><div class="eyebrow">Step-by-step guide</div><h2>Run your pageant tabulation</h2></div><button class="modal-close" value="cancel" aria-label="Close">Close</button></div><p class="modal-description">Follow these steps in order. Use each button to open the screen for that step.</p><ol class="guide-steps">
+    <li><div><strong>Enter event details</strong><p>Add the pageant name, date, and location.</p></div><button class="button button-outline" data-go="settings" type="button">Event details</button></li>
+    <li><div><strong>Add contestants</strong><p>Give every contestant a unique entry number and name.</p></div><button class="button button-outline" data-go="contestants" type="button">Contestants</button></li>
+    <li><div><strong>Add judges</strong><p>Create one record for each person who will score.</p></div><button class="button button-outline" data-go="judges" type="button">Judges</button></li>
+    <li><div><strong>Set up rounds, categories, and criteria</strong><p>Use Quick setup to add several stages and scoring categories together. Set their order and how many contestants advance, then review the weight changes before saving. On Categories, use Round to edit to manage one round at a time. Later rounds stay locked until every previous round is finished.</p></div><button class="button button-outline" data-go="rounds" type="button">Rounds</button></li>
+    <li><div><strong>Enter scores</strong><p>Select a round, category, and criterion. Enter all judges’ scores for each contestant. Choose Save &amp; view rankings to open Results for that round, or Save &amp; next to continue to the next grid. Results keeps each round in its own section.</p></div><button class="button button-primary" data-go="scores" type="button">Score entry</button></li>
+    <li><div><strong>Finish a round and advance contestants</strong><p>After reviewing Rankings for this round, check What is missing and resolve any cutoff tie. Choose Finish round &amp; proceed to next to finish this round and open judging for the next round with only the advancing contestants.</p></div><button class="button button-outline" data-go="results" type="button">Results</button></li>
+    <li><div><strong>Back up and share results</strong><p>Download a JSON backup. From Results, print a tabulation sheet or export CSV files.</p></div><button class="button button-outline" data-guide-backup type="button">Backup and restore</button></li>
+  </ol><div class="modal-footer"><button class="button button-primary" value="cancel">Done</button></div></form></dialog>
+  <dialog id="setup-wizard-dialog" class="modal setup-modal"><form method="dialog"><div class="modal-heading"><div><div class="eyebrow">Event setup</div><h2>Quick setup</h2></div><button class="modal-close" type="button" data-setup-action="cancel" aria-label="Close">Close</button></div><div id="setup-wizard-content"></div><div class="modal-footer" id="setup-wizard-footer"></div></form></dialog>
+  <dialog id="reset-dialog" class="modal"><form id="reset-form"><div class="modal-heading"><div><div class="eyebrow">Event data</div><h2>Reset all contest fields</h2></div><button class="modal-close" type="button" data-close-reset>Close</button></div><p>Download a backup before clearing this event. Type RESET to confirm.</p><button class="button button-outline" type="button" id="reset-backup">Download backup</button><label>Type RESET<input id="reset-confirmation" autocomplete="off"></label><div id="reset-error" role="alert" hidden></div><div class="modal-footer"><button class="button button-outline" type="button" data-close-reset>Cancel</button><button class="button button-danger" type="submit">Reset all contest fields</button></div></form></dialog>
+    <script src="scoring.js" defer></script>
+    <script src="app.js" defer></script>
+</body>
+</html>
