@@ -38,8 +38,8 @@ CHI System/
   tests/
     scoring.test.js           Built-in node:test coverage
   assets/
-    archivo-variable.ttf      Self-hosted Archivo font
-    archivo-OFL.txt           Font license
+    google-sans-flex-variable.ttf  Self-hosted Google Sans Flex variable font
+    google-sans-flex-OFL.txt       SIL Open Font License
   tools/
     tailwindcss.exe           Tailwind v4.3.3 standalone Windows CLI
 ```

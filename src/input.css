@@ -13,7 +13,7 @@
   --radius-*: initial;
   --radius-input: 3px;
   --shadow-*: initial;
-  --font-sans: "Archivo", system-ui, sans-serif;
+  --font-sans: "Google Sans Flex", system-ui, sans-serif;
   --text-micro: 0.6875rem;
   --text-caption: 0.8125rem;
   --text-body: 0.9375rem;
@@ -23,11 +23,11 @@
 }
 
 @font-face {
-  font-family: "Archivo";
-  src: url("../assets/archivo-variable.ttf") format("truetype");
+  font-family: "Google Sans Flex";
+  src: url("./assets/google-sans-flex-variable.ttf") format("truetype");
   font-style: normal;
-  font-weight: 100 900;
-  font-stretch: 62% 125%;
+  font-weight: 1 1000;
+  font-stretch: 25% 151%;
   font-display: swap;
 }
 
